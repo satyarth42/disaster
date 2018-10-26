@@ -34,6 +34,7 @@
         $('#coords').append(box);
         $('coords').append("<button value='Submit' onclick=getCoords()");
     }
+    
     $.get("127.0.0.1:8000", function( data ) {
         let cyclone = data['cyclone'];
         let volcano = data['volcano'];
@@ -94,9 +95,9 @@
             }
         }
         
-        let ansCal = "flood";
-        let ansLat = floodCoor[0];
-        let ansLon = floodCoor[1];
+        var ansCal = "flood";
+        var ansLat = floodCoor[0];
+        var ansLon = floodCoor[1];
         min_diff = Math.hypot(floodCoor[0]-lat,floodCoor[1]-lon);
 
         if(Math.hypot(cycloneCoor[0]-lat,cycloneCoor[1]-lon)<min_diff)
@@ -107,7 +108,7 @@
             ansLon = cycloneCoor[1];
         }
 
-        let ans_magnitude;
+        var ans_magnitude;
         if(Math.hypot(earthCoor[0]-lat,earthCoor[1]-lon)<min_diff)
         {
             min_diff=Math.hypot(earthCoor[0]-lat,earthCoor[1]-lon);
@@ -125,9 +126,38 @@
             ansLon = volcanoCoor[1];
         }
 
+        var msg_body = "Latitude: "+ansLat+" "+"Longitude :"+ansLon;
+        if(ansCal===earthquake)
+        {
+            msg_body = msg_body + " Magnitude " + ans_magnitude;
+        }
+            if (!("Notification" in window)) {
+            alert("This browser does not support system notifications");
+            }
+            else if (Notification.permission === "granted") {
+            notify();
+            }
+            else if (Notification.permission !== 'denied') {
+            Notification.requestPermission(function (permission) {
+                if (permission === "granted") {
+                notify();
+                }
+            });
+            }
+                   
+            function notify() {
+            var notification = new Notification(ansCal+" nearby", {
+                body: msg_body,
+            });
         
-
-    });
+            notification.onclick = function () {
+                window.open("http://carnes.cc");      
+            };
+            setTimeout(notification.close.bind(notification),20000); 
+            }
+    
+    //});
+    
 </script>
 </body>
 </html>
