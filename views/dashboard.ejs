@@ -16,12 +16,13 @@
 <div id="coords" class="box" align='center'></div>
 </div>
 <script type="text/javascript">
+    let lan,lon;
     if(navigator.geolocation){
         $('#coords').text("Getting your coordinates");
         navigator.geolocation.getCurrentPosition(function(position) {
             $('#coords').text('');
-            let lat = position.coords.latitude;
-            let lon = position.coords.longitude;
+            lat = position.coords.latitude;
+            lon = position.coords.longitude;
             $('#coords').append("<div>Latitude : "+ lat +"</div>");
             $('#coords').append("<div>Longitude : "+ lon +"</div>");
             $.post( "/save_loc", {latitude: lat, longitude: lon } );
@@ -33,6 +34,100 @@
         $('#coords').append(box);
         $('coords').append("<button value='Submit' onclick=getCoords()");
     }
+    $.get("127.0.0.1:8000", function( data ) {
+        let cyclone = data['cyclone'];
+        let volcano = data['volcano'];
+        let earthquake = data['earthquake'];
+        let flood = data['flood'];
+        
+        let floodCoor = [0,0];
+        let min_diff = 10000000.0;
+        for(let i=0;i<cyclone.length();i++)
+        {
+            let diff = Math.hypot(flood[i]['Latitude']-lat,flood[i]['Longitude']-lon);
+            if(diff<min_diff)
+            {
+                floodCoor[0]=flood[i]['Latitude'];
+                floodCoor[1]=flood[i]['Longitude'];
+                min_diff = diff;
+            }
+        }
+        
+        let cycloneCoor = [0,0];
+        min_diff = 10000000.0;
+        for(let i=0;i<cyclone0.length();i++)
+        {
+            let diff = Math.hypot(cyclone[i]['Latitude']-lat,cyclone[i]['Longitude']-lon);
+            if(diff<min_diff)
+            {
+                cycloneCoor[0]=cyclone[i]['Latitude'];
+                cycloneCoor[1]=cyclone[i]['Longitude'];
+                min_diff = diff;
+            }
+        }
+
+        let volcanoCoor = [0,0];
+        min_diff = 10000000.0;
+        for(let i=0;i<volcano.length();i++)
+        {
+            let diff = Math.hypot(volcano[i]['Latitude']-lat,volcano[i]['Longitude']-lon);
+            if(diff<min_diff)
+            {
+                volcanoCoor[0]=volcano[i]['Latitude'];
+                volcanoCoor[1]=volcano[i]['Longitude'];
+                min_diff = diff;
+            }
+        }
+
+        let magnitude = 0;
+        let earthCoor = [0,0];
+        min_diff = 10000000.0;
+        for(let i=0;i<earthquake.length();i++)
+        {
+            let diff = Math.hypot(earthquake[i]['Latitude']-lat,earthquake[i]['Longitude']-lon);
+            if(diff<min_diff)
+            {
+                earthCoor[0]=earthquake[i]['Latitude'];
+                earthCoor[1]=earthquake[i]['Longitude'];
+                magnitude = earthquake[i]['Magnitude'];
+                min_diff = diff;
+            }
+        }
+        
+        let ansCal = "flood";
+        let ansLat = floodCoor[0];
+        let ansLon = floodCoor[1];
+        min_diff = Math.hypot(floodCoor[0]-lat,floodCoor[1]-lon);
+
+        if(Math.hypot(cycloneCoor[0]-lat,cycloneCoor[1]-lon)<min_diff)
+        {
+            min_diff=Math.hypot(floodCoor[0]-lat,Coorp[1]-lon);
+            ansCal = "cyclone";
+            ansLat = cycloneCoor[0];
+            ansLon = cycloneCoor[1];
+        }
+
+        let ans_magnitude;
+        if(Math.hypot(earthCoor[0]-lat,earthCoor[1]-lon)<min_diff)
+        {
+            min_diff=Math.hypot(earthCoor[0]-lat,earthCoor[1]-lon);
+            ansCal = "earthquake";
+            ansLat = earthCoor[0];
+            ansLon = earthCoor[1];
+            ans_magnitude = magnitude;
+        }
+
+        if(Math.hypot(volcanoCoor[0]-lat,volcanoCoor[1]-lon)<min_diff)
+        {
+            min_diff=Math.hypot(volcanoCoor[0]-lat,volcanoCoor[1]-lon);
+            ansCal = "volcano eruption";
+            ansLat = volcanoCoor[0];
+            ansLon = volcanoCoor[1];
+        }
+
+        
+
+    });
 </script>
 </body>
 </html>
