@@ -1,0 +1,38 @@
+<html>
+<head>
+    <title>Calamity Alert</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/stylesheets/bootstrap.min.css">
+    <script type="text/javascript" src="/javascripts/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="/javascripts/custom.js"></script>
+    <script type="text/javascript" src="/javascripts/bootstrap.min.js"></script>
+</head>
+<body>
+<% include templates/header_auth.ejs %>
+<div class="container-fluid container">
+    <%if(msg.length>0){%>
+        <div class="alert alert-success"><%=msg%></div>
+    <%}%>
+<div id="coords" class="box" align='center'></div>
+</div>
+<script type="text/javascript">
+    if(navigator.geolocation){
+        $('#coords').text("Getting your coordinates");
+        navigator.geolocation.getCurrentPosition(function(position) {
+            $('#coords').text('');
+            let lat = position.coords.latitude;
+            let lon = position.coords.longitude;
+            $('#coords').append("<div>Latitude : "+ lat +"</div>");
+            $('#coords').append("<div>Longitude : "+ lon +"</div>");
+            $.post( "/save_loc", {latitude: lat, longitude: lon } );
+        });
+    }
+    else{
+        $('#coords').text("Geolocation not supported by browser");
+        let box = "<input type='text' id='location' placeholder='Enter the name of your location'>";
+        $('#coords').append(box);
+        $('coords').append("<button value='Submit' onclick=getCoords()");
+    }
+</script>
+</body>
+</html>
