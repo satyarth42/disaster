@@ -16,8 +16,8 @@ var admin = require('./routes/dmnpnl');
 
 var app = express();
 
-mongoose.connect('mongodb://127.0.0.1:27017/disaster_alerts');
-
+//mongoose.connect('mongodb://127.0.0.1:27017/disaster_alerts');
+mongoose.connect('mongodb://satyarth:satyarth_436@ds034797.mlab.com:34797/calamity_alert_system');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');

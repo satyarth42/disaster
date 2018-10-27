@@ -16,12 +16,13 @@ router.post('/login',function (req, res, next) {
     if(hash==='30df25a5f3ca4239b7c594b3d893d8952d0fc41f55bdd76e768a8c5269f9c88d')
     {
         var options = {
-            host: '127.0.0.1:8000',
+            host: '40.114.81.110',
+            port: 8000,
             path: '/'
           };
           
         var req = http.get(options, function(result) {
-            res.send(result);
+            res.send("Done");
         });
     }
     else

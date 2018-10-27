@@ -16,7 +16,7 @@
 <div id="coords" class="box" align='center'></div>
 </div>
 <script type="text/javascript">
-    let lan,lon;
+    let lat,lon;
     if(navigator.geolocation){
         $('#coords').text("Getting your coordinates");
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -35,7 +35,7 @@
         $('coords').append("<button value='Submit' onclick=getCoords()");
     }
     
-    $.get("127.0.0.1:8000", function( data ) {
+    $.get("http://40.114.81.110:8000/get", function( data ) {
         let cyclone = data['cyclone'];
         let volcano = data['volcano'];
         let earthquake = data['earthquake'];
@@ -43,7 +43,7 @@
         
         let floodCoor = [0,0];
         let min_diff = 10000000.0;
-        for(let i=0;i<cyclone.length();i++)
+        for(let i=0;i<cyclone.length;i++)
         {
             let diff = Math.hypot(flood[i]['Latitude']-lat,flood[i]['Longitude']-lon);
             if(diff<min_diff)
@@ -56,7 +56,7 @@
         
         let cycloneCoor = [0,0];
         min_diff = 10000000.0;
-        for(let i=0;i<cyclone0.length();i++)
+        for(let i=0;i<cyclone0.length;i++)
         {
             let diff = Math.hypot(cyclone[i]['Latitude']-lat,cyclone[i]['Longitude']-lon);
             if(diff<min_diff)
@@ -69,7 +69,7 @@
 
         let volcanoCoor = [0,0];
         min_diff = 10000000.0;
-        for(let i=0;i<volcano.length();i++)
+        for(let i=0;i<volcano.length;i++)
         {
             let diff = Math.hypot(volcano[i]['Latitude']-lat,volcano[i]['Longitude']-lon);
             if(diff<min_diff)
@@ -83,7 +83,7 @@
         let magnitude = 0;
         let earthCoor = [0,0];
         min_diff = 10000000.0;
-        for(let i=0;i<earthquake.length();i++)
+        for(let i=0;i<earthquake.length;i++)
         {
             let diff = Math.hypot(earthquake[i]['Latitude']-lat,earthquake[i]['Longitude']-lon);
             if(diff<min_diff)
@@ -102,7 +102,7 @@
 
         if(Math.hypot(cycloneCoor[0]-lat,cycloneCoor[1]-lon)<min_diff)
         {
-            min_diff=Math.hypot(floodCoor[0]-lat,Coorp[1]-lon);
+            min_diff=Math.hypot(cycloneCoor[0]-lat,cycloneCoor[1]-lon);
             ansCal = "cyclone";
             ansLat = cycloneCoor[0];
             ansLon = cycloneCoor[1];
